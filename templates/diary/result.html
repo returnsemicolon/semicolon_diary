@@ -1,0 +1,172 @@
+{% extends 'diary/index.html' %}
+{% load static %}
+
+{% block title %}<title>return :Diary 감성분석 다이어리</title>{% endblock %}
+
+{% block main %}
+{% csrf_token %}
+<style>
+#piechart{
+    
+    text-align:left;
+    
+}
+#columnchart_values{
+    text-align:right;
+    
+}
+#sentence{
+  clear:right;
+  font-family: 'Jua', sans-serif;
+  text-align:center;
+  color:#96b753;
+  font-size: 70px;
+}
+#box{
+  padding:250px;
+}
+</style>
+<input type = 'hidden' id = 'text' value = '{{ text }}'>
+<div id = 'loading'>
+<h1 class="cover-heading">조금만 기다려 주세요...</h1>
+</div>
+<div id = 'result' style='display:none'>
+<h1 class="cover-heading">오늘의 감정 분석 결과</h1>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<div id="sentence" style="padding:100px;"></div>
+<div style="float:left">
+<div id="piechart" style="width: 500px; height: 500px; float:left;"></div>
+<div id="columnchart_values" style="width: 100px; height: 100px; float:right;"></div>
+</div>
+<div id="box"></div>
+</div>
+
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type = "text/javascript">
+
+
+
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+console.log(csrftoken);
+var text = document.getElementById('text').value;
+var result = {};
+console.log(text);
+var loading = document.getElementById('loading');
+var page = document.getElementById('result');
+var pie_result={};
+var max=0;
+var find=[];
+
+
+function find_max(result){
+    find.push(result.results.happy);
+    find.push(result.results.joy);
+    find.push(result.results.sadness);
+    find.push(result.results.angry);
+
+    var num=Math.max.apply(null,find);
+    for(var i=0;i<4;i++){
+      if(find[i]==num){
+        max=i;
+      }
+    }
+    
+};
+
+function good_word(max){
+  var sentence=['오늘도 내일도 행복한 하루를 간직해요:D', '즐거움이 가득한 오늘 하루! 보람찬 하루를 보내셨어요!', '괜찮아요. 오늘은 조금 쉬어볼까요?','심호흡을 깊게 해봐요. 내일은 오늘보다 훨씬 나을 테니까요!'];
+  return sentence[max]
+
+};
+function wait(result){
+    pie_result=result
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    google.charts.load("current", {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawcolumn);
+    
+
+    
+}
+
+function drawcolumn() {
+      var data = google.visualization.arrayToDataTable([
+        ["Element", "Density", { role: "style" } ],
+        ["sad", pie_result.results.sadness, "color:#bfc7a7"],
+        ["joy", pie_result.results.joy, "color:#96b753"],
+        ["angry", pie_result.results.angry, "color:#c6e686"],
+        ["happy", pie_result.results.happy, "color: #446418"]
+      ]);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        title: "막대그래프 분석 결과",
+        width: 600,
+        height: 400,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+      chart.draw(view, options);
+  }
+
+function drawChart() {
+
+var data = google.visualization.arrayToDataTable([
+  ['Task', 'Hours per Day'],
+  ['SAD',     pie_result.results.sadness],
+  ['JOY',      pie_result.results.joy],
+  ['ANGRY',  pie_result.results.angry],
+  ['HAPPY', pie_result.results.happy],
+
+]);
+
+var options = {
+  title: '파이그래프 분석 결과',
+  colors:['#bfc7a7','#96b753' ,'#c6e686','#446418']
+
+};
+
+var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+chart.draw(data, options);
+}
+
+function setInnerHTML(){
+          const element=document.getElementById('sentence');
+          element.innerHTML+='<div>'+good_word(max)+'</div>';
+        }
+
+
+fetch('{% url "diary:analysis" %}', {
+	method: 'POST',
+	credentials: 'same-origin',
+	headers: {
+		'X-Requested-With':'XMLHttpRequest',
+		'X-CSRFToken': csrftoken,
+	},
+	body: text
+	})
+	.then(response => response.json())
+	.then(json => {
+		result = json
+    pie_result=result
+    wait(result)
+    find_max(result)
+    setInnerHTML()
+		loading.style.display ='none'
+		page.style.display = 'block'
+	})
+
+    </script>
+{% endblock %}

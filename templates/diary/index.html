@@ -1,0 +1,192 @@
+
+<!-- {% load static %} -->
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+
+    <!--- basic page needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <title>return :Diary</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- mobile specific metas
+    ================================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS
+    ================================================== -->
+    {% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">    
+
+    <!-- script
+    ================================================== -->
+    <script src="js/modernizr.js"></script>
+    <script defer src="js/fontawesome/all.min.js"></script>
+
+    <!-- favicons
+    ================================================== -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+
+</head>
+
+<body id="top">
+
+    <!-- preloader
+    ================================================== -->
+    <div id="preloader">
+        <div id="loader" class="dots-fade">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <!-- Header
+    ================================================== -->
+    <header class="s-header">
+
+        <div class="row">
+
+            <div class="s-header__content column" style="min-height: 0rem;">
+                <h1 class="s-header__logotext">
+                    <a href="index.html" title="">return :Diary</a>
+                </h1>
+                <p class="s-header__tagline"> 감정 분석 다이어리</p>
+            </div>
+
+        </div> <!-- end row -->
+
+       <nav class="s-header__nav-wrap">
+
+           <div class="row">
+
+                <ul class="s-header__nav">
+                    <li class="current"><a href="index.html">Home</a></li>
+                    <li><a href="demo.html">Demo</a></li>	
+                    <li><a href="archives.html">contact</a></li>
+                    <li><a href="https://lajancia.github.io/">Blog</a></li>
+                </ul> <!-- end #nav -->
+
+           </div> 
+
+        </nav> <!-- end #nav-wrap -->
+
+        <a class="header-menu-toggle" href="#0" title="Menu"><span>Menu</span></a>
+
+    </header> <!-- Header End -->
+
+    <!-- Content
+    ================================================== -->
+    <div class="s-content" style=" padding-left:300px">
+
+        <!-- <div class="row"> -->
+
+            <div id="main" class="s-content__main large-8 column">
+
+                <article class="entry">
+
+                    <header class="entry__header">
+
+                        <h2 class="entry__title h1">
+                            <a href="single.html" title="">Diary</a>
+                        </h2>
+
+                        <div class="entry__meta">
+                            <ul>
+                                <li>Aug 20, 2021</li>
+                                <li><a href="#" title="" rel="category tag">diary</a></li>
+                                <li>Hwang</li>
+                            </ul>
+                        </div>
+                     
+                    </header>
+                    
+                    <div class="entry__content">
+                      {% block main %}
+                      {% endblock %}
+                    </div> 
+
+                </article> <!-- end entry -->
+
+                
+           <!-- </div> end main -->
+
+           
+
+       </div> <!-- end row -->
+
+   </div> <!-- end content-wrap -->
+
+    <!-- Footer
+    ================================================== -->
+    <footer class="s-footer">
+
+        <div class="row s-footer__top">
+            <div class="column">
+               
+            </div>
+        </div> <!-- end footer__top -->
+
+        <div class="row s-footer__bottom">
+
+            <div class="large-6 tab-full column s-footer__info">
+                <h3 class="h6">Return;</h3>
+
+                
+            </div>
+
+           
+
+            <div class="large-6 tab-full column">
+                <div class="row">
+
+                  <div class="large-8 tab-full column">
+
+                    <h3 class="h6">데이터청년캠퍼스</h3>
+                    
+                    
+      
+                </div>
+        
+                    <div class="large-4 tab-full column">
+                        <h3  class="h6">Navigate</h3>
+        
+                        <ul class="s-footer__list s-footer-list--nav group">
+                            <li><a href="#0">Home</a></li>
+                            <li><a href="#0">Blog</a></li>
+                            <li><a href="#0">About</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ss-copyright">
+                <span>© Copyright Keep It Simple 2019</span> 
+                <span>Design by <a href="https://www.styleshout.com/">StyleShout</a></span>
+            </div>
+
+        </div> <!-- end footer__bottom -->
+
+        <div class="ss-go-top">
+            <a class="smoothscroll" title="Back to Top" href="#top">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 0l8 9h-6v15h-4v-15h-6z"/></svg>
+            </a>
+        </div> <!-- end ss-go-top -->
+
+    </footer> <!-- end Footer-->
+
+    <!-- Java Script
+    ================================================== -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

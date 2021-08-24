@@ -1,0 +1,18 @@
+{% extends 'diary/index.html' %}
+{% load static %}
+{% block title %}<title>return :Diary</title>{% endblock %}
+
+{% block main %}
+<form action = "{% url 'diary:result' %}" method='POST' id = text>
+{% csrf_token %}
+<div id = 'body'>
+<h1 class="cover-heading">오늘의 일기 작성하기</h1>
+    <p class="lead" id="loading">
+    <textarea name = 'text' form = 'text' cols ="60" rows ="10" placeholder="" autofocus required ></textarea>
+    </p>
+    <p class="lead">
+      <button type = "submit" class = "btn btn-lg btn-secondary" value = "submit" id = "result">분석 하기</button>
+    </p>
+</div>
+</form>
+{% endblock %}
