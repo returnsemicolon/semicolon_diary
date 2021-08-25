@@ -1,6 +1,6 @@
 # **KoBERT 감정분석 다이어리**
 
-> 데이터 청년 캠퍼스: 황수민, 김유화, 김민수, 두소원, 박상희, 추다연
+> 데이터 청년 캠퍼스: 황수민, 김유화, 김민수, 두소원, 추다연, 박상희
 
 </br>
 
@@ -19,7 +19,7 @@
 
 따라서 본 프로젝트는 정신건강의학과에서 환자를 대상으로 한 **신조어 감성분석을 이용한 개인 감정 진단 시스템**을 구현하는 것이 프로젝트의 목표로 한다. 웹이나 앱으로 만들어진 감성 일기는 보통 젊은 세대가 많이 사용하기 때문에 감정분석의 정확도를 높히기 위해 신조어 분석 또한 실행한다.
 
-일기장에 일기를 입력했을 때 행복, 즐거움, 분노, 슬픔 4가지 감정을 분류하여 감정을 시각화 하여 나타낸다.
+일기장에 일기를 입력했을 때 **행복, 즐거움, 분노, 슬픔** 4가지 감정을 분류하여 감정을 시각화 하여 나타낸다.
 
 </br>
 
@@ -171,6 +171,8 @@ sentence_train["emotion"] = sentence_train["emotion"].apply(label)
 
 ```
 
+- 네가지 감정에 따라 레이블링을 처리하는 함수를 만든다.
+
 </br>
 
 ```python
@@ -183,6 +185,9 @@ pip install torch
 #SKT에서 공개한 KoBERT 모델을 불러오기
 !pip install git+https://git@github.com/SKTBrain/KoBERT.git@master
 ```
+
+- 기본 모델을 만들 떄 사용되는 라이브러리들을 import한다. 이때 mxnet은 CUDA의 버전에 따라 다른 숫자를 사용해야 한다.
+- 현재 이 프로젝트에서 사용되는 CUDA는 10.1버전 기준이기 때문에 mxnet-cu101을 사용한다.
 
 </br>
 
@@ -204,6 +209,8 @@ from transformers import AdamW
 from transformers.optimization import WarmupLinearSchedule
 ```
 
+- 위에서 정상적으로 모델이 임포트 되어있을 경우 문제 없이 사용된다.
+
 </br>
 
 ```python
@@ -213,6 +220,9 @@ bertmodel, vocab = get_pytorch_kobert_model()
 tokenizer = get_tokenizer()
 tok = nlp.data.BERTSPTokenizer(tokenizer, vocab, lower=False)
 ```
+
+- KoBERT를 사용하는 과정에서 GPU를 이용하기 위한 사전 세팅 방법
+- CUDA의 설치 버전이 일치하지 않을 경우 에러가 발생할 수 있다.
 
 </br>
 
@@ -249,11 +259,18 @@ for e in range(num_epochs):
     print("epoch {} test acc {}".format(e+1, test_acc / (batch_id+1)))
 ```
 
+- 사용되는 KoBERT 모델 구현 함수는 SKT KoBERT를 참고한다.
+- 새로 크롤링한 트위터 텍스트 데이터를 추가적으로 학습시킨다.
+
 </br>
 
 ```python
 torch.save(model.state_dict(), 'drive/My Drive/data/kobert_ending_finale.pt')
 ```
+
+- 추후에 Django에서 사용할 학습된 모델을 파일의 형태로 저장한다.
+
+</br>
 
 **모델 테스트**
 
@@ -351,6 +368,8 @@ results = calc_result(result)
 print(results)
 ```
 
+- 학습한 모델이 잘 동작하는지 간단하게 테스트를 진행해본다.
+
 </br>
 
 ### **웹사이트 구현**
@@ -364,7 +383,7 @@ print(results)
 **필요한 모듈 설치**
 
 - pip install django-sslserver
-- KoBert
+- KoBERT
 
   ```
   git clone https://github.com/SKTBrain/KoBERT.git
@@ -609,6 +628,12 @@ print(results)
        return list
    ```
 
+   - analysis 함수에서 이전에 저장해둔 학습된 모델을 불러와 사용한다.
+   - 계산된 데이터를 바깥으로 불러낼 때, 학습시킨 모델의 감정 라벨링 순서대로 불러내어야 한다.
+   - 계산된 결과는 result에 저장되어 post 된다.
+
+</br>
+
 6. templates/diary의 html과 연결
 
 - diary.html과 result.html은 index.html에서 extends를 통해 나타난다.
@@ -617,14 +642,27 @@ print(results)
 </br>
 
 7. 장고 실행
-   `python python manage.py makemigrations diary #다이어리 마이그래이션 만들기 python manage.py migrate python manage.py runserver #서버 실행 `
+
+   ```python
+   python manage.py makemigrations diary #다이어리 마이그래이션 만들기
+   python manage.py migrate python manage.py runserver #서버 실행
+   ```
+
    </br>
 
 ## **이슈사항**
 
 1. CUDA 사용 불가 문제
+
+   - 일반적으로 CUDA 버전 문제로 인해 발생한다. CUDA 설치 버전과 맞는 cuDNN과 pytorch가 설치되어있는지 확인해본다.
+   - 컴퓨터의 GPU 사양이 너무 낮을 경우 제대로 동작하지 않을 수도 있다.
+
 2. sslserver not found 문제
+   - sslserver은 pip install django-sslserver를 통해 설치해야 한다.
 3. 디렉토리 이슈
+   - 설치된 KoBERT의 라이브러리를 불러오는 도중, 경로에 한글이 포함되어있을 경우, 에러가 발생한다. 따라서 경로에 한글이 포함되징 않도록 주의한다.
+4. from transformers import WarmupLinearSchedule 사용 불가 이슈
+   - 임포트된 모듈 중 버전 문제로 인해 사용되지 않는 것으로 파악된다. 따라서 위와 같은 에러가 발생할 시, `from transformers import WarmupLinearSchedule as get_linear_schedule_with_warmup`로 변경하여 사용하도록 한다.
 
 </br>
 
@@ -637,3 +675,7 @@ print(results)
 * [장고 앱 만들기 기초](https://docs.djangoproject.com/ko/3.2/intro/tutorial02/)
 
 * [emotale - KoBERT](https://github.com/afnf33/emoTale)
+
+* [KoBERT 이용 방법](https://61wdth.tistory.com/5)
+
+* [트위터 크롤링](https://rachelsdotcom.tistory.com/72)
