@@ -37,6 +37,8 @@
 
 ![Untitled](https://user-images.githubusercontent.com/50996139/130745049-d67685af-7b4c-4706-9de4-ef83cc32389a.jpeg)
 
+[깃허브 주소](https://github.com/returnsemicolon/semicolon_diary)
+
 
 ### **데이터 수집**
 
